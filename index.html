@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='css/style.css' rel='stylesheet' type='text/css'>
+    <script src="js/knockout-3.3.0.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/ViewModel.js"></script>
+    <title>Map Project</title>
+  </head>
+  <body>
+
+    <div class="search">
+      <form data-bind="submit: searchMarkers">
+        <input type="text" data-bind="value: searchterm">
+        <input type="submit" value="Search">
+      </form>
+
+      <div id="search_results">
+        <div class="search_results_header">
+          Search Results <img data-bind="click: toggleResults, attr: {src: toggleImage}" width="20"/>
+        </div>
+        <div data-bind="visible: searchResults_isVisible">
+          <ul class="search_results_data" data-bind="foreach: searchResults">
+            <li data-bind="click: function(){ $parent.selectSearchResult($data) }">
+              <span class="search_results_title" data-bind="text: name"></span><br/>
+              <span class="search_results_address" data-bind="text: vicinity"></span>
+            </li>
+          </ul>
+          <ul data-bind="visible: searchResults().length == 0">
+            <li class="search_results_title">No Results Found</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="map-canvas"></div>
+
+  </body>
+</html>
