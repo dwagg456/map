@@ -4,7 +4,7 @@ window.onload = function() {
 		this.marker = marker;
 		this.name = name;
 		this.vicinity = vicinity;
-	}
+	};
 
 	// Overall viewmodel for this screen, along with initial state
 	var ViewModel = function() {
@@ -50,7 +50,23 @@ window.onload = function() {
 			service.nearbySearch(request, nearbySearch_callback);
 
 		} catch (e) {
-			document.write('<div style="width:100%;text-align:center;"><h3>The application is temporarily unavailable.</h3><br/><img src="images/arrow_circular.png"/></div>');
+			// Hide search box
+			var cols = document.getElementsByClassName('search');
+			for(var i=0; i<cols.length; i++){
+				cols[i].style.display = 'none';
+			}
+
+			// Hide search results list
+			cols = document.getElementsByClassName('search_results');
+			for(i=0; i<cols.length; i++){
+				cols[i].style.display = 'none';
+			}
+
+			// Show error message
+			cols = document.getElementsByClassName('map_err');
+			for(i=0; i<cols.length; i++){
+				cols[i].style.display = 'block';
+			}
 		}
 
 		// Callback function - PlacesService.nearbySearch
@@ -61,11 +77,10 @@ window.onload = function() {
 					self.createMarker(results[i]);
 				}
 			}
-		};
+		}
 
 		// Takes a place as input and creates/displays marker on Google Map and adds 'click' listener
 		self.createMarker = function(place){
-			var placeLoc = place.geometry.location;
 			var marker = new google.maps.Marker({
 				map: map,
 				position: place.geometry.location,
@@ -105,7 +120,7 @@ window.onload = function() {
 						content_string = content_string + ' <a href="https://foursquare.com/v/' + data.response.venues[0].name + '/'+ data.response.venues[0].id + '?ref=O3HOXE5ZEZ05NEMSCBSV0MQHIQQWN2IKMGTQFGEXY2AY1T0S" target="_blank"><img width="15" src="images/foursquare-icon-16x16.png"></a><br/>';
 						content_string = content_string + data.response.venues[0].location.address + '<br/>';
 						content_string = content_string + data.response.venues[0].contact.formattedPhone + '<br/>';
-						if (data.response.venues[0].hasMenu == true)
+						if (data.response.venues[0].hasMenu === true)
 							content_string = content_string + '<a href="' + data.response.venues[0].menu.url + '" target="_blank">View Menu</a><br/>';
 							
 					} else {
@@ -124,7 +139,7 @@ window.onload = function() {
 					infowindow.open(map, marker);
 				}
 			});	
-		}
+		};
 
 		// function to search restaurant names and update map/results screen to show only matches
 		self.searchMarkers = function(){
@@ -139,34 +154,36 @@ window.onload = function() {
 				}
 			}
 			self.searchResults(searchResultsList);
-		}
+		};
 
 		// reset marker icons to default "not selected" pin image
 		self.resetMarkerIcons = function(){
 			for (var i in self.placesList()){
-				self.placesList()[i].marker.setIcon(pinImage);
+        if (self.placesList().hasOwnProperty(i)) {
+					self.placesList()[i].marker.setIcon(pinImage);
+        }
 			}
-		}
+		};
 
 		// function to display/hide search results window and change arrow icon to match current display
 		self.toggleResults = function(){
-			if (self.searchResults_isVisible() == true){
+			if (self.searchResults_isVisible() === true){
 				self.searchResults_isVisible(false);
 				self.toggleImage("images/arrow_down.png");
 			} else {
 				self.searchResults_isVisible(true);
 				self.toggleImage("images/arrow_up.png");
 			}
-		}
+		};
 
 		// function to show infowindow and select marker when restaurant is selected in search result list
 		self.selectSearchResult = function(marker){
 			google.maps.event.trigger(marker.marker, 'click');
 			map.setCenter(marker.marker.position);
 			self.toggleResults();
-		}
+		};
 	};	
 
 	ko.applyBindings(new ViewModel());
 
-}
+};
